@@ -5,9 +5,9 @@ import threading
 import datetime
 import time
 ###########################################  BIB-Automator CBA #########################################################
-disclaimer = "DISCLAIMER: Enkel stoelnummers van de zolder werken, andere bib-zalen zijn inferieur.  \\
-                Run dit programma paar minuten voor 18:00, vul je gegevens in en wacht totdat je reservering is gemaakt.\\
-                 Je kan meerdere stoelen ingeven indien je meerdere reserveringen wilt."
+disclaimer = "DISCLAIMER: Enkel stoelnummers van de zolder werken, andere bib-zalen zijn inferieur.\n"  \
+                "Run dit programma paar minuten voor 18:00, vul je gegevens in en wacht totdat je reservering is gemaakt.\n"\
+                 "Je kan meerdere stoelen ingeven indien je meerdere reserveringen wilt.""
 print(disclaimer)
 #  Gebruiksaanwijzing:
                   
@@ -22,14 +22,11 @@ print(disclaimer)
 
 _r_nummer= input("\nTyp je r-nummer (bv r1234657)\n")                 # r-nummer
 _wachtwoord= input("Typ je toledo-wachtwoord\n")                  # wachtwoord van toledo account
-_datum = "2022-"+input("Typ je maand + datum dat je wilt reserveren (vb 01-12  => 12 januari)\n")      # datum van reservatie    (year-month-day)
+_datum = "2022-"+input("Typ je maand + datum dat je wilt reserveren (vb typ 01-12  voor 12 januari)\n")      
 
-_startuur = input("Typ je startuur van reservering (vb 09 => 9 uur sochtends, 21 => 9 uur savonds)\n")                # startuur van reservatie (moet altijd 2 getallen zijn!)
-_einduur =  input("Typ je einduur van reservering (vb 09 => 9 uur sochtends, 21 => 9 uur savonds)\n")               # startuur van reservatie (moet altijd 2 getallen zijn!) ( max verschil tss start en eind is 8)
-_StoelID =  input("Stoelnummer op zolder (vb 355 of 399 etc) \nWil je meerdere stoelen proberen typ dan de nummers achter elkaar zonder spatie maar met komma bv 355,399,351\n")             # stoel id = stoelnummer in cba
-                                # vb: plaats 155 in de boekenzaal
-                                # vb: plaats 227 in de Study kelder
-                                # vb  je laat _StoelID = ""   --> random stoel zal gekozen worden met gekozen tijdstip & datum
+_startuur = input("Typ je startuur van reservering (vb typ 09 voor 9 uur sochtends, 21 => 9 uur savonds)\n")               
+_einduur =  input("Typ je einduur van reservering (vb typ 09 voor 9 uur sochtends, 21 => 9 uur savonds)\n")             
+_StoelID =  input("Stoelnummer op zolder (vb 355 of 399 etc) \nWil je meerdere stoelen proberen typ dan de nummers achter elkaar zonder spatie \nmaar met komma bv 355,399,351\n")                                           
 stoelnmmrs = _StoelID.split(',')
 
 ########################################################################################################################
@@ -142,20 +139,18 @@ def main(r_nummer,wachtwoord,datum,startuur,einduur,StoelID):
             time.sleep(0.05)
 
 
-        if len(str(StoelID)) == 0:
-            response = make_random_reservation(r_nummer,datum,startuur,einduur,s)
-            time.sleep(0)
-        else:
-            response = make_specific_reservation(r_nummer,datum,startuur,einduur,idnummer,s)
+        
+        
+        response = make_specific_reservation(r_nummer,datum,startuur,einduur,idnummer,s)
+        time.sleep(0)
+        text = strip(response.json())
 
-            text = strip(response.json())
+        for i in range(4):
+            if text[2:7]=="ERROR":
 
-            for i in range(4):
-                if text[2:7]=="ERROR":
-
-                    response = make_specific_reservation(r_nummer, datum, startuur, einduur, idnummer, s)
-                    text = strip(response.json())
-            print(text)
+                response = make_specific_reservation(r_nummer, datum, startuur, einduur, idnummer, s)
+                text = strip(response.json())
+        print(text)
 
 
 
